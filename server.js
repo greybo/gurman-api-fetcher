@@ -10,7 +10,7 @@ async function fetchDataFromAPI() {
     try {
         const response = await axios.get('https://vngurmann.salesdrive.me/api/order/list/?filter[statusId]=__NOTDELETED__', {
             headers: {
-                'Form-Api-Key': 'fZBk3CpDdYDE_gfYNNHnR0t85mxymdcR1MslYx6Dmdv4ipDLLfDYpbC5ys_By4nZi5UNSqqTJ4Z5NXAwDgNjNvChnvd_EZZ7yDht'
+                'Form-Api-Key': process.env.ORDER_FETCH_LIST_KEY
             }
         });
         return response.data;
