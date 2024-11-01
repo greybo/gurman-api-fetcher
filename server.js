@@ -5,7 +5,7 @@ const cron = require('node-cron');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Функція для виконання запиту до API
+// Function to fetch data from the API
 async function fetchDataFromAPI() {
     try {
         const response = await axios.get('https://vngurmann.salesdrive.me/api/order/list/?filter[statusId]=__NOTDELETED__', {
@@ -20,10 +20,10 @@ async function fetchDataFromAPI() {
     }
 }
 
-// Змінна для зберігання останніх отриманих даних
+// Variable to store the last fetched data
 let lastFetchedData = null;
 
-// Планування завдання на кожну хвилину
+// Scheduling a task for every minute
 cron.schedule('* * * * *', async () => {
     console.log('Fetching data from API...');
     const apiData = await fetchDataFromAPI();
@@ -35,13 +35,13 @@ cron.schedule('* * * * *', async () => {
     }
 });
 
-// Функція для конвертації даних в потрібний формат
+// Function to convert the data
 function convertData(apiData) {
     // console.log(`convertData ${apiData.data}`);
     return `success ${apiData.data[0].id}`;
 }
 
-// Маршрут для отримання останніх даних
+// Route to get the latest data
 app.get('/api/data', (req, res) => {
     if (lastFetchedData) {
         res.json(lastFetchedData);
