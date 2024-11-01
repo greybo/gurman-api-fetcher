@@ -10,7 +10,7 @@ async function fetchDataFromAPI() {
     try {
         const response = await axios.get('https://vngurmann.salesdrive.me/api/order/list/?filter[statusId]=__NOTDELETED__', {
             headers: {
-                'Form-Api-Key': 'some_key'
+                'Form-Api-Key': 'fZBk3CpDdYDE_gfYNNHnR0t85mxymdcR1MslYx6Dmdv4ipDLLfDYpbC5ys_By4nZi5UNSqqTJ4Z5NXAwDgNjNvChnvd_EZZ7yDht'
             }
         });
         return response.data;
@@ -20,68 +20,6 @@ async function fetchDataFromAPI() {
     }
 }
 
-// Функція для конвертації даних в потрібний формат
-function convertData(apiData) {
-    const convertedData = {
-        data: apiData.data.map(item => ({
-            id: item.id,
-            statusId: item.status_id,
-            fName: item.f_name,
-            lName: item.l_name,
-            comment: item.comment,
-            shippingMethod: item.shipping_method,
-            trackingNumber: item.tracking_number,
-            boxData: item.box_data,
-            products: item.products.map(product => ({
-                productId: product.product_id,
-                amount: product.amount,
-                text: product.text,
-                barcode: product.barcode,
-                restCount: product.rest_count,
-                sku: product.sku,
-                added: product.added
-            })),
-            shippingData: item.shipping_data.map(shipping => ({
-                text: shipping.text,
-                value: shipping.value
-            }))
-        })),
-        meta: {
-            fieldsMeta: {
-                shippingMethod: apiData.meta.fields_meta.shipping_method,
-                products: {
-                    options: apiData.meta.fields_meta.products.options.map(option => ({
-                        parameter: option.parameter,
-                        restCount: option.rest_count,
-                        barcode: option.barcode,
-                        sku: option.sku,
-                        text: option.text,
-                        value: option.value,
-                        options: option.options.map(subOption => ({
-                            barcode: subOption.barcode,
-                            text: subOption.text,
-                            parameter: subOption.parameter,
-                            restCount: subOption.rest_count,
-                            sku: subOption.sku,
-                            value: subOption.value
-                        })),
-                        complect: option.complect.map(complectItem => ({
-                            complectId: complectItem.complect_id,
-                            count: complectItem.count,
-                            formId: complectItem.form_id,
-                            id: complectItem.id,
-                            productId: complectItem.product_id
-                        }))
-                    }))
-                },
-                statusDatum: apiData.meta.fields_meta.status_datum,
-                userResponsible: apiData.meta.fields_meta.user_responsible
-            }
-        }
-    };
-    return convertedData;
-}
-
 // Змінна для зберігання останніх отриманих даних
 let lastFetchedData = null;
 
@@ -89,11 +27,19 @@ let lastFetchedData = null;
 cron.schedule('* * * * *', async () => {
     console.log('Fetching data from API...');
     const apiData = await fetchDataFromAPI();
+    console.log('fetchDataFromAPI() successfully.');
     if (apiData) {
+        console.log(`apiData =${apiData.data[0].id}`);
         lastFetchedData = convertData(apiData);
         console.log('Data fetched and converted successfully.');
     }
 });
+
+// Функція для конвертації даних в потрібний формат
+function convertData(apiData) {
+    // console.log(`convertData ${apiData.data}`);
+    return `success ${apiData.data[0].id}`;
+}
 
 // Маршрут для отримання останніх даних
 app.get('/api/data', (req, res) => {
